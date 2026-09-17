@@ -129,3 +129,16 @@ a { color: var(--accent); }
   .chart { gap: 3px; }
 }
 
+
+.section-heading { margin: 40px 0 6px; font-size: 1.15rem; }
+.grid.two { grid-template-columns: repeat(2, 1fr); }
+.chart.compact { height: 132px; }
+.chart.cols-24 { grid-template-columns: repeat(24, minmax(4px, 1fr)); }
+.chart.cols-7 { grid-template-columns: repeat(7, minmax(10px, 1fr)); }
+.axis { display: flex; justify-content: space-between; margin-top: 6px; color: var(--muted); font-size: .72rem; }
+#at-weekday-axis { justify-content: space-around; }
+.ranking.hashes .label { font-size: .82rem; }
+@media (max-width: 760px) {
+  .grid.two { grid-template-columns: 1fr; }
+  .chart.cols-24 { gap: 2px; }
+}

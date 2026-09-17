@@ -1,0 +1,72 @@
+name: All-time aggregate
+
+# Folds the private R2 log archive into a bounded public aggregate. Runs daily
+# and can be triggered by hand. Requires repository secrets R2_ACCOUNT_ID,
+# R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, and R2_BUCKET (read-only token), plus
+# an optional repository variable R2_PREFIX (defaults to "raw").
+
+on:
+  schedule:
+    - cron: "27 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: alltime-aggregate
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve DB-IP release month
+        id: dbip
+        run: echo "month=$(date -u +%Y-%m)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache DB-IP Lite
+        uses: actions/cache@v4
+        with:
+          path: dbip
+          key: dbip-lite-${{ steps.dbip.outputs.month }}
+
+      - name: Download DB-IP Lite country ranges
+        run: |
+          mkdir -p dbip
+          if [ -s dbip/dbip.csv.gz ]; then exit 0; fi
+          month="${{ steps.dbip.outputs.month }}"
+          url="https://download.db-ip.com/free/dbip-country-lite-${month}.csv.gz"
+          if ! curl -fsSL -o dbip/dbip.csv.gz "$url"; then
+            previous="$(date -u -d 'last month' +%Y-%m)"
+            curl -fsSL -o dbip/dbip.csv.gz \
+              "https://download.db-ip.com/free/dbip-country-lite-${previous}.csv.gz"
+          fi
+
+      - name: Build all-time aggregate
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_PREFIX: ${{ vars.R2_PREFIX || 'raw' }}
+        run: python3 scripts/build_alltime.py --state data/alltime.json --geo dbip/dbip.csv.gz
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/alltime.json
+          if git diff --cached --quiet; then
+            echo "all-time aggregate unchanged"
+            exit 0
+          fi
+          git commit -m "Update all-time aggregate"
+          git pull --rebase --autostash origin main
+          git push

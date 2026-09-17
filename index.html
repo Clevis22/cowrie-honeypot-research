@@ -58,10 +58,72 @@
       <div id="daily-chart" class="chart" role="img" aria-label="Daily connection counts"></div>
     </section>
 
+    <h2 class="section-heading">All-time archive</h2>
+    <p id="alltime-coverage" class="coverage">Loading all-time aggregate…</p>
+
+    <section class="summary" aria-label="All-time statistics">
+      <article><span>Connections</span><strong id="at-connections">—</strong></article>
+      <article><span>Unique public IPs</span><strong id="at-ips">—</strong></article>
+      <article><span>Login attempts</span><strong id="at-logins">—</strong></article>
+      <article><span>Commands</span><strong id="at-commands">—</strong></article>
+      <article><span>File captures</span><strong id="at-captures">—</strong></article>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>All-time top source IPs</h2>
+        <p class="note">Public, globally routable addresses across the whole archived history.</p>
+        <ol id="at-top-ips" class="ranking"></ol>
+      </article>
+      <article class="panel">
+        <h2>All-time top countries</h2>
+        <p class="note">Estimated from source IP; not attacker identity.</p>
+        <ol id="at-top-countries" class="ranking"></ol>
+      </article>
+      <article class="panel">
+        <h2>All-time top commands</h2>
+        <p class="note">Executable names only. Full command lines stay private.</p>
+        <ol id="at-top-commands" class="ranking"></ol>
+      </article>
+    </section>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>Attempted usernames</h2>
+        <p class="note">Most common login usernames across all archived sessions.</p>
+        <ol id="at-top-usernames" class="ranking"></ol>
+      </article>
+      <article class="panel">
+        <h2>Captured file hashes</h2>
+        <p class="note">SHA-256 recorded by Cowrie. Hashes are inert; no sample is stored or served here.</p>
+        <ol id="at-top-hashes" class="ranking hashes"></ol>
+      </article>
+    </section>
+
+    <section class="panel activity">
+      <h2>Monthly connections</h2>
+      <p class="note">Every UTC month in the archive, oldest to newest.</p>
+      <div id="at-monthly" class="chart compact" role="img" aria-label="Monthly connection counts"></div>
+      <div id="at-monthly-axis" class="axis"></div>
+    </section>
+
+    <section class="grid two">
+      <article class="panel">
+        <h2>Connections by hour (UTC)</h2>
+        <div id="at-hour" class="chart compact cols-24" role="img" aria-label="Connections by hour of day, UTC"></div>
+        <div id="at-hour-axis" class="axis"></div>
+      </article>
+      <article class="panel">
+        <h2>Connections by weekday (UTC)</h2>
+        <div id="at-weekday" class="chart compact cols-7" role="img" aria-label="Connections by weekday, UTC"></div>
+        <div id="at-weekday-axis" class="axis"></div>
+      </article>
+    </section>
+
     <section class="method">
       <h2>What is published</h2>
-      <p>This page is generated once per day from a bounded local index. It contains counts, country codes, top public source IPs, and normalized command names. Raw logs, passwords, complete command lines, URLs, session identifiers, captured files, and malware samples never enter this repository.</p>
-      <p>Counts describe this sensor's observations, not the whole Internet. Automated scanners, relays, VPNs, and compromised hosts can all affect the results.</p>
+      <p>The recent section is generated once per day from a bounded 90-day local index. The all-time section is generated from the private, encrypted-at-rest raw archive in Cloudflare R2; only a small aggregate file is committed. Published fields are counts, country codes, top public source IPs, normalized command names, attempted usernames, and captured-file SHA-256 hashes. Passwords, login messages, complete command lines, URLs, session identifiers, and captured file contents or samples never enter this repository.</p>
+      <p>Counts describe this sensor's observations, not the whole Internet. Automated scanners, relays, VPNs, and compromised hosts can all affect the results. Usernames and source addresses are observed inputs, not proof of identity.</p>
     </section>
 
     <footer>

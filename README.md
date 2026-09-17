@@ -23,7 +23,7 @@ Source countries are resolved locally with the DB-IP Lite country database. Raw 
 
 ## Public data boundary
 
-`data/stats.json` contains:
+`data/stats.json` (recent) contains:
 
 - totals for connections, unique globally routable source IPs, login attempts, commands, downloads, and uploads;
 - the ten most active public source IPs and country codes;
@@ -31,9 +31,17 @@ Source countries are resolved locally with the DB-IP Lite country database. Raw 
 - daily connection counts for the latest 30 days; and
 - generation and coverage timestamps.
 
-It never contains raw Cowrie events, attempted passwords, usernames, full command lines, command arguments, URLs, session identifiers, captured file contents, hashes, or private/non-routable IP addresses. The exporter reads the bounded SQLite index read-only and writes one fixed-schema JSON file. Git history provides a daily record of published snapshots without becoming a log archive.
+`data/alltime.json` (all-time, built from the private raw archive) contains:
 
-Exact public source IPs are included because this is security telemetry. They indicate observed network sources, not proven identities or locations. VPNs, relays, scanners, and compromised machines may appear in the results.
+- all-time totals for connections, unique public IPs (approximate, via a HyperLogLog sketch), login attempts split into accepted and rejected, commands, downloads, uploads, failed downloads, unique captured files, and unique usernames;
+- the most common public source IPs, country codes, executable names, attempted usernames, and captured-file SHA-256 hashes;
+- connections by hour of day and by weekday, all-time;
+- connections per day for the last 180 days and per month for all-time; and
+- a compact internal `_state` block (which archives were folded in, counters, and the sketches) so the job is incremental.
+
+Neither file contains raw Cowrie events, attempted passwords, login messages, complete command lines, command arguments, URLs, session identifiers, or captured file contents. The recent exporter reads the bounded SQLite index read-only; the all-time builder reads the private R2 archive read-only. Git history provides a daily record of published aggregates without becoming a log archive.
+
+Exact public source IPs, attempted usernames, and captured-file hashes are included because this is security telemetry. They indicate observed network inputs, not proven identities or locations. VPNs, relays, scanners, and compromised machines may appear in the results. Hash lookups can reveal public reputation data for a sample; no sample is ever stored or served here.
 
 ## Daily publisher
 
@@ -64,6 +72,31 @@ sudo install -o root -g root -m 0644 deploy/cowrie-public-stats.service /etc/sys
 sudo install -o root -g root -m 0644 deploy/cowrie-public-stats.timer /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable --now cowrie-public-stats.timer
+```
+
+## All-time aggregate (GitHub Actions)
+
+Beyond the 90-day recent window, `data/alltime.json` is folded from the private
+Cloudflare R2 archive by [`.github/workflows/alltime.yml`](.github/workflows/alltime.yml),
+which runs daily and on demand. Only a bounded aggregate is committed; the raw
+logs stay in the private bucket. The job is incremental: each run lists the
+bucket and processes only archives that are not already recorded in the file's
+`_state` block, so a plain and a gzip copy of one rotated log are counted once.
+
+Required repository configuration (Settings → Secrets and variables → Actions):
+
+- secrets `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET` — a read-only R2 token;
+- optional variable `R2_PREFIX` (defaults to `raw`).
+
+Country lookups use the free, token-free DB-IP Lite CSV, downloaded and cached
+by month inside the workflow; no address is sent to any external service.
+
+A local run against a directory of Cowrie logs (no R2 needed):
+
+```sh
+python3 scripts/build_alltime.py \
+  --state data/alltime.json --geo /path/to/dbip-country-lite-YYYY-MM.csv.gz \
+  --local-dir /path/to/logs
 ```
 
 ## Local preview and checks
