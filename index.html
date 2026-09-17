@@ -3,137 +3,70 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Daily aggregate telemetry from a research Cowrie SSH honeypot.">
-  <title>Cowrie Honeypot — Public Telemetry</title>
+  <meta name="description" content="Aggregate telemetry from a research Cowrie SSH honeypot.">
+  <title>Cowrie honeypot telemetry</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main>
     <header>
-      <div>
-        <p class="eyebrow">RESEARCH SENSOR / PUBLIC AGGREGATES</p>
-        <h1>Cowrie honeypot telemetry</h1>
-        <p class="intro">A small, daily snapshot of unsolicited SSH activity observed by one research sensor.</p>
-      </div>
-      <div class="freshness" aria-live="polite">
-        <span class="dot" aria-hidden="true"></span>
-        <span id="freshness">Loading latest snapshot…</span>
-      </div>
+      <h1>Cowrie honeypot telemetry</h1>
+      <p class="intro">Aggregate observations from one research SSH sensor.</p>
+      <p class="meta"><span id="freshness">Loading…</span><span id="coverage"></span></p>
     </header>
 
-    <section class="summary" aria-label="Summary statistics">
-      <article><span>Connections</span><strong id="connections">—</strong></article>
-      <article><span>Unique public IPs</span><strong id="unique-ips">—</strong></article>
-      <article><span>Login attempts</span><strong id="logins">—</strong></article>
-      <article><span>Commands</span><strong id="commands">—</strong></article>
-      <article><span>File transfers</span><strong id="transfers">—</strong></article>
+    <nav class="picker" id="picker" aria-label="Timeframe">
+      <button type="button" data-window="24h">24 hours</button>
+      <button type="button" data-window="7d">7 days</button>
+      <button type="button" data-window="30d">30 days</button>
+      <button type="button" data-window="90d">90 days</button>
+      <button type="button" data-window="all">All time</button>
+    </nav>
+
+    <dl class="summary" aria-label="Totals for the selected timeframe">
+      <div><dt>Connections</dt><dd id="connections">—</dd></div>
+      <div><dt>Unique public IPs</dt><dd id="unique-ips">—</dd></div>
+      <div><dt>Login attempts</dt><dd id="logins">—</dd></div>
+      <div><dt>Commands</dt><dd id="commands">—</dd></div>
+      <div><dt>File captures</dt><dd id="captures">—</dd></div>
+    </dl>
+    <p class="sub" id="window-note"></p>
+
+    <section class="block">
+      <h2>Connections over time</h2>
+      <div id="series" class="chart" role="img" aria-label="Connections over time"></div>
+      <div id="series-axis" class="axis"></div>
     </section>
 
-    <p id="coverage" class="coverage">Loading coverage…</p>
+    <div class="lists">
+      <section><h2>Top source IPs</h2><ol id="top-ips" class="ranking"></ol></section>
+      <section><h2>Top countries</h2><ol id="top-countries" class="ranking"></ol></section>
+      <section><h2>Top commands</h2><ol id="top-commands" class="ranking"></ol></section>
+      <section><h2>Attempted usernames</h2><ol id="top-usernames" class="ranking"></ol></section>
+      <section><h2>Captured file hashes</h2><ol id="top-hashes" class="ranking hashes"></ol></section>
+    </div>
 
-    <section class="grid">
-      <article class="panel">
-        <h2>Top source IPs</h2>
-        <p class="note">Public, globally routable addresses ranked by connection count.</p>
-        <ol id="top-ips" class="ranking"></ol>
-      </article>
-
-      <article class="panel">
-        <h2>Top countries</h2>
-        <p class="note">Estimated from source IP; location does not establish attacker identity.</p>
-        <ol id="top-countries" class="ranking"></ol>
-      </article>
-
-      <article class="panel">
-        <h2>Top commands</h2>
-        <p class="note">Executable names only. Arguments and full command lines stay private.</p>
-        <ol id="top-commands" class="ranking"></ol>
-      </article>
+    <section class="block" id="clock" hidden>
+      <h2>Activity by hour and weekday <span class="muted">UTC</span></h2>
+      <div id="hour" class="chart compact cols-24" role="img" aria-label="Connections by hour of day, UTC"></div>
+      <div id="hour-axis" class="axis"></div>
+      <div id="weekday" class="chart compact cols-7" role="img" aria-label="Connections by weekday, UTC"></div>
+      <div id="weekday-axis" class="axis"></div>
     </section>
 
-    <section class="panel activity">
-      <h2>Daily connections</h2>
-      <p class="note">The most recent 30 days within the published window.</p>
-      <div id="daily-chart" class="chart" role="img" aria-label="Daily connection counts"></div>
-    </section>
-
-    <h2 class="section-heading">All-time archive</h2>
-    <p id="alltime-coverage" class="coverage">Loading all-time aggregate…</p>
-
-    <section class="summary" aria-label="All-time statistics">
-      <article><span>Connections</span><strong id="at-connections">—</strong></article>
-      <article><span>Unique public IPs</span><strong id="at-ips">—</strong></article>
-      <article><span>Login attempts</span><strong id="at-logins">—</strong></article>
-      <article><span>Commands</span><strong id="at-commands">—</strong></article>
-      <article><span>File captures</span><strong id="at-captures">—</strong></article>
-    </section>
-
-    <section class="grid">
-      <article class="panel">
-        <h2>All-time top source IPs</h2>
-        <p class="note">Public, globally routable addresses across the whole archived history.</p>
-        <ol id="at-top-ips" class="ranking"></ol>
-      </article>
-      <article class="panel">
-        <h2>All-time top countries</h2>
-        <p class="note">Estimated from source IP; not attacker identity.</p>
-        <ol id="at-top-countries" class="ranking"></ol>
-      </article>
-      <article class="panel">
-        <h2>All-time top commands</h2>
-        <p class="note">Executable names only. Full command lines stay private.</p>
-        <ol id="at-top-commands" class="ranking"></ol>
-      </article>
-    </section>
-
-    <section class="grid two">
-      <article class="panel">
-        <h2>Attempted usernames</h2>
-        <p class="note">Most common login usernames across all archived sessions.</p>
-        <ol id="at-top-usernames" class="ranking"></ol>
-      </article>
-      <article class="panel">
-        <h2>Captured file hashes</h2>
-        <p class="note">SHA-256 recorded by Cowrie. Hashes are inert; no sample is stored or served here.</p>
-        <ol id="at-top-hashes" class="ranking hashes"></ol>
-      </article>
-    </section>
-
-    <section class="panel activity">
-      <h2>Monthly connections</h2>
-      <p class="note">Every UTC month in the archive, oldest to newest.</p>
-      <div id="at-monthly" class="chart compact" role="img" aria-label="Monthly connection counts"></div>
-      <div id="at-monthly-axis" class="axis"></div>
-    </section>
-
-    <section class="grid two">
-      <article class="panel">
-        <h2>Connections by hour (UTC)</h2>
-        <div id="at-hour" class="chart compact cols-24" role="img" aria-label="Connections by hour of day, UTC"></div>
-        <div id="at-hour-axis" class="axis"></div>
-      </article>
-      <article class="panel">
-        <h2>Connections by weekday (UTC)</h2>
-        <div id="at-weekday" class="chart compact cols-7" role="img" aria-label="Connections by weekday, UTC"></div>
-        <div id="at-weekday-axis" class="axis"></div>
-      </article>
-    </section>
-
-    <section class="method">
-      <h2>What is published</h2>
-      <p>The recent section is generated once per day from a bounded 90-day local index. The all-time section is generated from the private, encrypted-at-rest raw archive in Cloudflare R2; only a small aggregate file is committed. Published fields are counts, country codes, top public source IPs, normalized command names, attempted usernames, and captured-file SHA-256 hashes. Passwords, login messages, complete command lines, URLs, session identifiers, and captured file contents or samples never enter this repository.</p>
-      <p>Counts describe this sensor's observations, not the whole Internet. Automated scanners, relays, VPNs, and compromised hosts can all affect the results. Usernames and source addresses are observed inputs, not proof of identity.</p>
+    <section class="note">
+      <p>Source IPs, attempted usernames, and captured-file hashes are observed inputs, not proof of identity. Country values are approximate. Counts describe one sensor, not the Internet.</p>
+      <p>Recent windows are published from a bounded 90-day local index; all-time is folded from a private raw archive. Passwords, login messages, full command lines, URLs, session identifiers, and captured file contents never appear here.</p>
     </section>
 
     <footer>
       <a href="https://github.com/Clevis22/cowrie-honeypot-research">Methodology and source</a>
-      <span>Data timestamps are UTC.</span>
+      <span>Timestamps are UTC.</span>
     </footer>
   </main>
 
-  <noscript>This page needs JavaScript to load the daily aggregate file.</noscript>
+  <noscript>This page needs JavaScript to load the aggregate files.</noscript>
   <script src="app.js" defer></script>
 </body>
 </html>
-

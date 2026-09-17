@@ -23,13 +23,18 @@ Source countries are resolved locally with the DB-IP Lite country database. Raw 
 
 ## Public data boundary
 
-`data/stats.json` (recent) contains:
+`data/stats.json` (recent) holds four fixed windows — 24 hours, 7 days,
+30 days, and 90 days. Each window contains:
 
-- totals for connections, unique globally routable source IPs, login attempts, commands, downloads, and uploads;
-- the ten most active public source IPs and country codes;
-- the ten most common executable names, such as `curl` or `wget`;
-- daily connection counts for the latest 30 days; and
-- generation and coverage timestamps.
+- totals for connections, unique globally routable source IPs, login attempts
+  split into accepted and rejected, commands, downloads, uploads, and failed
+  downloads;
+- the ten most active public source IPs, country codes, executable names,
+  attempted usernames, and captured-file hashes; and
+- hourly (24-hour window) or daily connection counts.
+
+The public page shows one timeframe picker spanning these windows plus an
+all-time option drawn from `data/alltime.json`.
 
 `data/alltime.json` (all-time, built from the private raw archive) contains:
 
@@ -48,7 +53,7 @@ Exact public source IPs, attempted usernames, and captured-file hashes are inclu
 [`scripts/publish_stats.py`](scripts/publish_stats.py) uses only the Python standard library. It:
 
 1. reads the local history database in SQLite read-only mode;
-2. aggregates a rolling window of at most 90 days;
+2. aggregates fixed 24-hour, 7-day, 30-day, and 90-day windows;
 3. discards private IPs and reduces commands to conservative executable labels;
 4. atomically replaces `data/stats.json`; and
 5. commits and pushes only that file when publishing is enabled.

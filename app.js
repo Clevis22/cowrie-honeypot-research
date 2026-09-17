@@ -5,9 +5,16 @@ const countryNames = typeof Intl.DisplayNames === "function"
   ? new Intl.DisplayNames(["en"], { type: "region" })
   : null;
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+const LABELS = { "24h": "Last 24 hours", "7d": "Last 7 days", "30d": "Last 30 days", "90d": "Last 90 days", all: "All time" };
+
+let stats = null;
+let alltime = null;
+let current = "30d";
+
+const $ = id => document.getElementById(id);
 
 function setText(id, value) {
-  document.getElementById(id).textContent = value;
+  $(id).textContent = value;
 }
 
 function pad(value) {
@@ -20,13 +27,21 @@ function countryLabel(code) {
   catch (_) { return code; }
 }
 
+function dayLabel(ts) {
+  return new Date(ts * 1000).toLocaleDateString("en-GB", { timeZone: "UTC", day: "2-digit", month: "short" });
+}
+
+function hourLabel(ts) {
+  return `${pad(new Date(ts * 1000).getUTCHours())}:00`;
+}
+
 function renderRanking(id, rows, labeler = value => value) {
-  const list = document.getElementById(id);
+  const list = $(id);
   list.replaceChildren();
   if (!rows || !rows.length) {
     const item = document.createElement("li");
     item.className = "empty";
-    item.textContent = "No observations in this window.";
+    item.textContent = "None in this timeframe.";
     list.append(item);
     return;
   }
@@ -45,110 +60,156 @@ function renderRanking(id, rows, labeler = value => value) {
 }
 
 function setAxis(id, labels) {
-  const box = document.getElementById(id);
-  box.replaceChildren(...labels.map(label => {
+  const box = $(id);
+  box.replaceChildren(...labels.map(text => {
     const span = document.createElement("span");
-    span.textContent = label;
+    span.textContent = text;
     return span;
   }));
 }
 
-function renderBars(id, rows, labeler) {
-  const chart = document.getElementById(id);
+function renderBars(id, points, describe) {
+  const chart = $(id);
   chart.replaceChildren();
-  if (!rows.length) return;
-  const peak = Math.max(1, ...rows.map(row => row.count));
-  chart.setAttribute("aria-label", rows.map(row => labeler(row)).join(", "));
-  for (const row of rows) {
+  if (!points.length) return;
+  const peak = Math.max(1, ...points.map(point => point.count));
+  chart.setAttribute("aria-label", points.map(describe).join(", "));
+  for (const point of points) {
     const bar = document.createElement("div");
     bar.className = "bar";
     bar.tabIndex = 0;
-    bar.style.height = `${Math.max(2, (row.count / peak) * 100)}%`;
-    bar.dataset.label = labeler(row);
+    bar.style.height = `${Math.max(2, (point.count / peak) * 100)}%`;
+    bar.dataset.label = describe(point);
     chart.append(bar);
   }
 }
 
-function renderChart(rows) {
-  const visible = rows.slice(-30);
-  renderBars("daily-chart", visible, row => `${row.date}: ${number.format(row.count)}`);
-  const peak = Math.max(1, ...visible.map(row => row.count));
-  document.getElementById("daily-chart").setAttribute(
-    "aria-label", visible.map(row => `${row.date}: ${row.count}`).join(", "));
-  return peak;
+function normalize(key) {
+  if (key === "all") {
+    if (!alltime) return null;
+    const t = alltime.all_time;
+    const monthly = alltime.monthly_connections || [];
+    return {
+      totals: { connections: t.connections, unique: t.unique_public_ips, logins: t.login_attempts,
+                accepted: t.logins_accepted, rejected: t.logins_rejected, commands: t.commands,
+                captures: t.downloads + t.uploads },
+      ips: alltime.top.ips, countries: alltime.top.countries, commands: alltime.top.commands,
+      usernames: alltime.top.usernames, hashes: alltime.top.hashes,
+      points: monthly.map(row => ({ label: row.month, count: row.count })),
+      hour: alltime.hour_of_day, weekday: alltime.weekday,
+      note: `All-time archive · ${alltime.coverage.days_observed} day(s) · ` +
+            `${alltime.coverage.first_observation.slice(0, 10)} to ${alltime.coverage.last_observation.slice(0, 10)} · ` +
+            `${number.format(t.unique_hashes)} unique files · ${number.format(t.unique_usernames)} usernames`,
+    };
+  }
+  if (stats && !stats.windows) {
+    // Backward compatibility with the pre-window snapshot shape.
+    const t = stats.totals;
+    return {
+      totals: { connections: t.connections, unique: t.unique_public_ips, logins: t.login_attempts,
+                commands: t.commands, captures: t.downloads + t.uploads },
+      ips: stats.top_ips, countries: stats.top_countries, commands: stats.top_commands,
+      usernames: [], hashes: [],
+      points: (stats.daily_connections || []).map(row => ({ label: row.date.slice(5), count: row.count })),
+      hour: null, weekday: null,
+      note: `${LABELS[key] || "Recent"} · rolling window`,
+    };
+  }
+  const window = stats && stats.windows ? stats.windows[key] : null;
+  if (!window) return null;
+  const t = window.totals;
+  const series = window.series;
+  const hourly = series.bucket_seconds === 3600;
+  const points = series.counts.map((count, index) => {
+    const ts = series.start + index * series.bucket_seconds;
+    return { label: hourly ? hourLabel(ts) : dayLabel(ts), count };
+  });
+  return {
+    totals: { connections: t.connections, unique: t.unique_public_ips, logins: t.login_attempts,
+              accepted: t.logins_accepted, rejected: t.logins_rejected, commands: t.commands,
+              captures: t.downloads + t.uploads },
+    ips: window.top_ips, countries: window.top_countries, commands: window.top_commands,
+    usernames: window.top_usernames, hashes: window.top_hashes,
+    points, hour: null, weekday: null,
+    note: `${hourly ? "Hourly" : "Daily"} buckets · ${number.format(t.logins_accepted)} accepted / ` +
+          `${number.format(t.logins_rejected)} rejected logins`,
+  };
 }
 
-function render(data) {
-  const totals = data.totals;
-  setText("connections", number.format(totals.connections));
-  setText("unique-ips", number.format(totals.unique_public_ips));
-  setText("logins", number.format(totals.login_attempts));
-  setText("commands", number.format(totals.commands));
-  setText("transfers", number.format(totals.downloads + totals.uploads));
+function render() {
+  const data = normalize(current);
+  if (!data) return;
+  setText("connections", number.format(data.totals.connections));
+  setText("unique-ips", number.format(data.totals.unique));
+  setText("logins", number.format(data.totals.logins));
+  setText("commands", number.format(data.totals.commands));
+  setText("captures", number.format(data.totals.captures));
+  setText("window-note", data.note);
 
-  const updated = new Date(data.generated_at);
-  setText("freshness", `Updated ${updated.toLocaleString(undefined, { timeZone: "UTC", timeZoneName: "short" })}`);
-  const partial = data.coverage.range_complete ? "complete" : "partial";
-  setText("coverage", `${data.window_days}-day rolling window · ${partial} coverage · ${data.coverage.first_observation.slice(0, 10)} to ${data.coverage.last_observation.slice(0, 10)}`);
-
-  renderRanking("top-ips", data.top_ips);
-  renderRanking("top-countries", data.top_countries, countryLabel);
-  renderRanking("top-commands", data.top_commands, value => value === "other" ? "Other / unclassified" : value);
-  renderChart(data.daily_connections);
-}
-
-function renderAllTime(data) {
-  const totals = data.all_time;
-  const coverage = data.coverage;
-  setText("at-connections", number.format(totals.connections));
-  setText("at-ips", number.format(totals.unique_public_ips));
-  setText("at-logins", number.format(totals.login_attempts));
-  setText("at-commands", number.format(totals.commands));
-  setText("at-captures", number.format(totals.downloads + totals.uploads));
-
-  const first = coverage.first_observation ? coverage.first_observation.slice(0, 10) : "—";
-  const last = coverage.last_observation ? coverage.last_observation.slice(0, 10) : "—";
-  setText("alltime-coverage",
-    `All-time archive · ${coverage.days_observed} day(s) · ${first} to ${last} · ` +
-    `${number.format(totals.logins_accepted)} accepted / ${number.format(totals.logins_rejected)} rejected · ` +
-    `${number.format(totals.unique_hashes)} unique files · ${number.format(totals.unique_usernames)} usernames`);
-
-  renderRanking("at-top-ips", data.top.ips);
-  renderRanking("at-top-countries", data.top.countries, countryLabel);
-  renderRanking("at-top-commands", data.top.commands, value => value === "other" ? "Other / unclassified" : value);
-  renderRanking("at-top-usernames", data.top.usernames);
-  renderRanking("at-top-hashes", data.top.hashes, value => value.length > 22 ? `${value.slice(0, 22)}…` : value);
-
-  const monthly = data.monthly_connections || [];
-  renderBars("at-monthly", monthly, row => `${row.month}: ${number.format(row.count)}`);
-  setAxis("at-monthly-axis", monthly.length
-    ? [monthly[0].month, monthly[Math.floor(monthly.length / 2)].month, monthly[monthly.length - 1].month]
+  renderBars("series", data.points, point => `${point.label}: ${number.format(point.count)}`);
+  const points = data.points;
+  setAxis("series-axis", points.length
+    ? [points[0].label, points[Math.floor(points.length / 2)].label, points[points.length - 1].label]
     : []);
 
-  const hours = data.hour_of_day || [];
-  renderBars("at-hour", hours.map((count, hour) => ({ label: `${pad(hour)}:00`, count })), row => `${row.label} UTC: ${number.format(row.count)}`);
-  setAxis("at-hour-axis", ["00", "06", "12", "18", "23"]);
+  renderRanking("top-ips", data.ips);
+  renderRanking("top-countries", data.countries, countryLabel);
+  renderRanking("top-commands", data.commands, value => value === "other" ? "Other / unclassified" : value);
+  renderRanking("top-usernames", data.usernames);
+  renderRanking("top-hashes", data.hashes, value => value.length > 22 ? `${value.slice(0, 22)}…` : value);
 
-  const weekday = data.weekday || [];
-  renderBars("at-weekday", weekday.map((count, index) => ({ label: WEEKDAYS[index], count })), row => `${row.label} UTC: ${number.format(row.count)}`);
-  setAxis("at-weekday-axis", WEEKDAYS);
+  const clock = $("clock");
+  if (data.hour && data.weekday) {
+    clock.hidden = false;
+    renderBars("hour", data.hour.map((count, hour) => ({ label: `${pad(hour)}:00`, count })),
+      point => `${point.label} UTC: ${number.format(point.count)}`);
+    setAxis("hour-axis", ["00", "06", "12", "18", "23"]);
+    renderBars("weekday", data.weekday.map((count, index) => ({ label: WEEKDAYS[index], count })),
+      point => `${point.label}: ${number.format(point.count)}`);
+    setAxis("weekday-axis", WEEKDAYS);
+  } else {
+    clock.hidden = true;
+  }
+
+  for (const button of document.querySelectorAll("#picker button")) {
+    button.setAttribute("aria-pressed", String(button.dataset.window === current));
+  }
 }
 
-function load(url, handler) {
-  return fetch(url, { cache: "no-store" })
-    .then(response => {
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return response.json();
-    })
-    .then(handler);
+function selectWindow(key, updateUrl = true) {
+  current = key;
+  if (updateUrl) history.replaceState(null, "", `?window=${key}`);
+  render();
 }
 
-load("data/stats.json", render).catch(() => {
-  document.querySelector(".dot").classList.add("error");
-  setText("freshness", "Snapshot unavailable");
-  setText("coverage", "The latest aggregate file could not be loaded. No raw data is requested by this page.");
-});
+function load(url) {
+  return fetch(url, { cache: "no-store" }).then(response => {
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return response.json();
+  });
+}
 
-load("data/alltime.json", renderAllTime).catch(() => {
-  setText("alltime-coverage", "The all-time aggregate is not available yet.");
+const requested = new URLSearchParams(location.search).get("window");
+if (LABELS[requested]) current = requested;
+
+Promise.allSettled([load("data/stats.json"), load("data/alltime.json")]).then(([statsResult, alltimeResult]) => {
+  if (statsResult.status === "fulfilled") stats = statsResult.value;
+  if (alltimeResult.status === "fulfilled") alltime = alltimeResult.value;
+  if (statsResult.status !== "fulfilled" || !stats) {
+    setText("freshness", "Snapshot unavailable");
+  } else {
+    const updated = new Date(stats.generated_at);
+    setText("freshness", `Updated ${updated.toLocaleString(undefined, { timeZone: "UTC", timeZoneName: "short" })}`);
+    setText("coverage", ` · ${stats.coverage.first_observation.slice(0, 10)} to ${stats.coverage.last_observation.slice(0, 10)}`);
+  }
+  if (!alltime) {
+    const button = document.querySelector('#picker button[data-window="all"]');
+    if (button) button.disabled = true;
+    if (current === "all") current = "30d";
+  }
+  document.getElementById("picker").addEventListener("click", event => {
+    const button = event.target.closest("button[data-window]");
+    if (button && !button.disabled) selectWindow(button.dataset.window);
+  });
+  render();
 });

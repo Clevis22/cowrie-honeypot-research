@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Export safe Cowrie aggregates and optionally publish the changed JSON."""
+"""Export safe Cowrie aggregates and optionally publish the changed JSON.
+
+The recent snapshot contains fixed 24-hour, 7-day, 30-day, and 90-day windows so
+the public page can offer a single timeframe picker. Aggregates only; no raw
+events, passwords, messages, full command lines, URLs, or session identifiers.
+"""
 
 from __future__ import annotations
 
@@ -18,10 +23,13 @@ import tempfile
 import time
 
 DAY = 86400
+WINDOWS = (("24h", 24, 3600), ("7d", 7, DAY), ("30d", 30, DAY), ("90d", 90, DAY))
 COMMAND_TOKEN = re.compile(r"^[A-Za-z0-9_.+-]{1,40}$")
 ASSIGNMENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 SEPARATORS = re.compile(r"&&|\|\||[;|&()\r\n]")
 WRAPPERS = {"command", "env", "nohup", "sudo", "timeout"}
+SHA256 = re.compile(r"[a-fA-F0-9]{64}\Z")
+RANK_LIMIT = 10
 
 
 def utc(value: float) -> str:
@@ -63,89 +71,120 @@ def connect_readonly(path: Path) -> sqlite3.Connection:
     return db
 
 
-def ranking(rows, limit: int = 10):
+def ranking(rows, limit: int = RANK_LIMIT):
     return [{"label": label, "count": int(count)} for label, count in rows[:limit]]
+
+
+def columns(db: sqlite3.Connection, table: str) -> set[str]:
+    return {row[1] for row in db.execute(f"PRAGMA table_info({table})")}
+
+
+def build_window(db, now: float, seconds: int, count: int, has_shasum: bool) -> dict:
+    start = int(now // seconds) * seconds - (count - 1) * seconds
+    args = (start, now)
+    totals = db.execute(
+        "SELECT "
+        "sum(eventid='cowrie.session.connect'),"
+        "count(DISTINCT NULLIF(src_ip,'')),"
+        "sum(eventid='cowrie.login.success'),"
+        "sum(eventid='cowrie.login.failed'),"
+        "sum(eventid='cowrie.command.input'),"
+        "sum(eventid='cowrie.session.file_download'),"
+        "sum(eventid='cowrie.session.file_upload'),"
+        "sum(eventid='cowrie.session.file_download.failed') "
+        "FROM events WHERE ts>=? AND ts<=?",
+        args,
+    ).fetchone()
+    connections, unique_ips, ok, failed, commands, downloads, uploads, failed_downloads = (
+        int(value or 0) for value in totals
+    )
+
+    def rank(field, where, limit=RANK_LIMIT):
+        rows = db.execute(
+            f"SELECT {field},count(*) FROM events WHERE ts>=? AND ts<=? AND {where} "
+            f"GROUP BY {field} ORDER BY count(*) DESC,{field} LIMIT ?",
+            args + (limit,),
+        )
+        return list(rows)
+
+    public_sources = [
+        (source, count)
+        for source, count in db.execute(
+            "SELECT src_ip,count(*) FROM events WHERE ts>=? AND ts<=? "
+            "AND eventid='cowrie.session.connect' AND src_ip!='' "
+            "GROUP BY src_ip ORDER BY count(*) DESC,src_ip",
+            args,
+        )
+        if public_ip(source)
+    ]
+    top_commands = collections.Counter(
+        command_name(row[0])
+        for row in db.execute(
+            "SELECT command FROM events WHERE ts>=? AND ts<=? "
+            "AND eventid='cowrie.command.input' AND command!=''",
+            args,
+        )
+    )
+    top_hashes = []
+    if has_shasum:
+        top_hashes = [
+            (digest.lower(), count)
+            for digest, count in db.execute(
+                "SELECT shasum,count(*) FROM events WHERE ts>=? AND ts<=? "
+                "AND shasum IS NOT NULL AND shasum!='' GROUP BY shasum "
+                "ORDER BY count(*) DESC,shasum LIMIT ?",
+                args + (RANK_LIMIT,),
+            )
+            if SHA256.fullmatch(digest or "")
+        ]
+    buckets = [0] * count
+    for index, total in db.execute(
+        "SELECT CAST((ts-?)/? AS INTEGER),count(*) FROM events "
+        "WHERE ts>=? AND ts<=? AND eventid='cowrie.session.connect' GROUP BY 1",
+        (start, seconds, start, now),
+    ):
+        if 0 <= index < count:
+            buckets[index] = int(total)
+    return {
+        "totals": {
+            "connections": connections,
+            "unique_public_ips": len(public_sources),
+            "login_attempts": ok + failed,
+            "logins_accepted": ok,
+            "logins_rejected": failed,
+            "commands": commands,
+            "downloads": downloads,
+            "uploads": uploads,
+            "failed_downloads": failed_downloads,
+        },
+        "top_ips": ranking(public_sources),
+        "top_countries": ranking(rank("country", "eventid='cowrie.session.connect'")),
+        "top_commands": ranking(top_commands.most_common(RANK_LIMIT)),
+        "top_usernames": ranking(rank(
+            "username", "eventid IN ('cowrie.login.failed','cowrie.login.success') AND username!=''")),
+        "top_hashes": ranking(top_hashes),
+        "series": {"start": start, "bucket_seconds": seconds, "counts": buckets},
+    }
 
 
 def build_snapshot(db_path: Path, days: int, now: float | None = None) -> dict:
     now = time.time() if now is None else now
-    cutoff = now - days * DAY
     with connect_readonly(db_path) as db:
         first, last = db.execute("SELECT min(ts),max(ts) FROM events").fetchone()
         if first is None or last is None:
             raise RuntimeError("history database contains no events")
-
-        totals_row = db.execute(
-            "SELECT "
-            "sum(eventid='cowrie.session.connect'),"
-            "sum(eventid IN ('cowrie.login.failed','cowrie.login.success'))," 
-            "sum(eventid='cowrie.command.input'),"
-            "sum(eventid='cowrie.session.file_download'),"
-            "sum(eventid='cowrie.session.file_upload') "
-            "FROM events WHERE ts>=? AND ts<=?",
-            (cutoff, now),
-        ).fetchone()
-        public_sources = [
-            (source, count)
-            for source, count in db.execute(
-                "SELECT src_ip,count(*) FROM events "
-                "WHERE ts>=? AND ts<=? AND eventid='cowrie.session.connect' AND src_ip!='' "
-                "GROUP BY src_ip ORDER BY count(*) DESC,src_ip",
-                (cutoff, now),
-            )
-            if public_ip(source)
-        ]
-        countries = list(db.execute(
-            "SELECT country,count(*) FROM events "
-            "WHERE ts>=? AND ts<=? AND eventid='cowrie.session.connect' "
-            "GROUP BY country ORDER BY count(*) DESC,country LIMIT 10",
-            (cutoff, now),
-        ))
-        commands = collections.Counter(
-            command_name(row[0])
-            for row in db.execute(
-                "SELECT command FROM events "
-                "WHERE ts>=? AND ts<=? AND eventid='cowrie.command.input' AND command!=''",
-                (cutoff, now),
-            )
-        )
-        daily_rows = dict(db.execute(
-            "SELECT strftime('%Y-%m-%d',ts,'unixepoch'),count(*) FROM events "
-            "WHERE ts>=? AND ts<=? AND eventid='cowrie.session.connect' GROUP BY 1",
-            (cutoff, now),
-        ))
-
-    end_date = dt.datetime.fromtimestamp(now, dt.timezone.utc).date()
-    start_date = end_date - dt.timedelta(days=min(days, 30) - 1)
-    daily = []
-    cursor = start_date
-    while cursor <= end_date:
-        label = cursor.isoformat()
-        daily.append({"date": label, "count": int(daily_rows.get(label, 0))})
-        cursor += dt.timedelta(days=1)
-
-    connections, logins, commands_total, downloads, uploads = (int(value or 0) for value in totals_row)
+        present = columns(db, "events")
+        has_shasum = "shasum" in present
+        windows = {}
+        for label, count, seconds in WINDOWS:
+            if label == "90d" and days != 90:
+                count = max(1, days)
+            windows[label] = build_window(db, now, seconds, count, has_shasum)
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": utc(now),
-        "window_days": days,
-        "coverage": {
-            "first_observation": utc(first),
-            "last_observation": utc(last),
-            "range_complete": first <= cutoff,
-        },
-        "totals": {
-            "connections": connections,
-            "unique_public_ips": len(public_sources),
-            "login_attempts": logins,
-            "commands": commands_total,
-            "downloads": downloads,
-            "uploads": uploads,
-        },
-        "top_ips": ranking(public_sources),
-        "top_countries": ranking(countries),
-        "top_commands": ranking(commands.most_common(10)),
-        "daily_connections": daily,
+        "coverage": {"first_observation": utc(first), "last_observation": utc(last)},
+        "windows": windows,
     }
 
 
@@ -199,4 +238,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
