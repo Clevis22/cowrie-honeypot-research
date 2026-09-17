@@ -82,8 +82,10 @@ p { margin: 0 0 8px; }
 .ranking .empty { color: var(--muted); }
 .ranking.hashes .label { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.82rem; }
 
-.note { padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
-.note p { margin-bottom: 8px; }
+.about { padding-top: 24px; border-top: 1px solid var(--line); max-width: 640px; }
+.about p { color: var(--muted); }
+.about ol { margin: 0 0 12px; padding-left: 1.15rem; color: var(--muted); }
+.about li { margin-bottom: 6px; }
 
 footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.82rem; }
 a { color: inherit; text-underline-offset: 2px; }

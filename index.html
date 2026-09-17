@@ -55,9 +55,18 @@
       <div id="weekday-axis" class="axis"></div>
     </section>
 
-    <section class="note">
-      <p>Source IPs, attempted usernames, and captured-file hashes are observed inputs, not proof of identity. Country values are approximate. Counts describe one sensor, not the Internet.</p>
-      <p>Recent windows are published from a bounded 90-day local index; all-time is folded from a private raw archive. The archive holds completed logs, so its newest day lags the live windows by up to one rotation. Passwords, login messages, full command lines, URLs, session identifiers, and captured file contents never appear here.</p>
+    <section class="about">
+      <h2>About this project</h2>
+      <p>This is a small research project: a single <a href="https://github.com/cowrie/cowrie">Cowrie</a> SSH honeypot exposed on the public internet and left to record whatever automation finds it. The sensor presents an ordinary Linux server so bots keep interacting with it. Every number here describes only what that one sensor observed, not the internet as a whole.</p>
+      <p>The pipeline:</p>
+      <ol>
+        <li>SSH sessions and submitted commands are written as JSON logs on the private host.</li>
+        <li>An hourly job folds the most recent 90 days into a small local index; a daily job derives the 24-hour, 7-day, 30-day, and 90-day windows shown here.</li>
+        <li>Completed logs are archived to a private Cloudflare R2 bucket. A scheduled GitHub Action folds that archive into the all-time aggregate.</li>
+        <li>Only sanitized aggregates are committed to this repository and rendered as a static page — no server, no analytics, no third-party runtime dependency.</li>
+      </ol>
+      <p>Published fields are counts, country codes, top public source IPs, normalized command names, attempted usernames, and captured-file SHA-256 hashes. Passwords, login messages, complete command lines, URLs, session identifiers, and captured file contents or samples never leave the private host. The archive holds completed logs, so the all-time view lags the live windows by up to one rotation.</p>
+      <p>Treat these as observations, not attribution: source addresses may be VPNs, relays, scanners, or compromised machines, and country values are approximate. Operate honeypots only on infrastructure you control and only where you are permitted to.</p>
     </section>
 
     <footer>
