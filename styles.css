@@ -96,3 +96,6 @@ a { color: inherit; text-underline-offset: 2px; }
   .lists { grid-template-columns: 1fr; gap: 32px; }
   footer { flex-direction: column; }
 }
+
+.about h3 { margin: 22px 0 6px; font-size: 0.95rem; font-weight: 600; }
+.about code, .block code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85em; }

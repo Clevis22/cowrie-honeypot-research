@@ -97,6 +97,7 @@ function normalize(key) {
       usernames: alltime.top.usernames, hashes: alltime.top.hashes,
       points: monthly.map(row => ({ label: row.month, count: row.count })),
       hour: alltime.hour_of_day, weekday: alltime.weekday,
+      days: alltime.coverage.days_observed, approx: true,
       note: `Archived through ${alltime.coverage.last_observation.slice(0, 10)} ` +
             `(the current day's logs rotate before archiving) · ${alltime.coverage.days_observed} day(s) · ` +
             `${number.format(t.unique_hashes)} unique files · ${number.format(t.unique_usernames)} usernames`,
@@ -111,7 +112,7 @@ function normalize(key) {
       ips: stats.top_ips, countries: stats.top_countries, commands: stats.top_commands,
       usernames: [], hashes: [],
       points: (stats.daily_connections || []).map(row => ({ label: row.date.slice(5), count: row.count })),
-      hour: null, weekday: null,
+      hour: null, weekday: null, days: 30, approx: false,
       note: `${LABELS[key] || "Recent"} · rolling window`,
     };
   }
@@ -131,6 +132,8 @@ function normalize(key) {
     ips: window.top_ips, countries: window.top_countries, commands: window.top_commands,
     usernames: window.top_usernames, hashes: window.top_hashes,
     points, hour: null, weekday: null,
+    days: key === "24h" ? 1 : key === "7d" ? 7 : key === "30d" ? 30 : 90,
+    approx: false,
     note: `${hourly ? "Hourly" : "Daily"} buckets · ${number.format(t.logins_accepted)} accepted / ` +
           `${number.format(t.logins_rejected)} rejected logins`,
   };
@@ -151,6 +154,24 @@ function render() {
   setAxis("series-axis", points.length
     ? [points[0].label, points[Math.floor(points.length / 2)].label, points[points.length - 1].label]
     : []);
+
+  const busiest = data.ips && data.ips[0];
+  const share = busiest && data.totals.connections
+    ? Math.round((100 * busiest.count) / data.totals.connections) : null;
+  const rate = data.days ? Math.round(data.totals.connections / data.days) : null;
+  const context = [];
+  if (rate) context.push(`~${number.format(rate)} connection attempts/day`);
+  context.push(`${number.format(data.totals.unique)} distinct public sources${data.approx ? " (approx.)" : ""}`);
+  if (busiest && share !== null) {
+    context.push(`busiest source ${busiest.label} (${number.format(busiest.count)}, ${share}%)`);
+  }
+  setText("context-line", context.join(" · "));
+  let hostile = `In this timeframe the sensor recorded ${number.format(data.totals.connections)} ` +
+    `connection attempts from ${number.format(data.totals.unique)} distinct public sources`;
+  if (rate) hostile += `, about ${number.format(rate)} a day`;
+  hostile += ".";
+  if (busiest && share !== null) hostile += ` The busiest single source accounted for ${share}% of them.`;
+  setText("hostile-line", hostile);
 
   renderRanking("top-ips", data.ips);
   renderRanking("top-countries", data.countries, countryLabel);

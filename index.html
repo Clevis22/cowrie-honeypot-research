@@ -32,6 +32,7 @@
       <div><dt>File captures</dt><dd id="captures">—</dd></div>
     </dl>
     <p class="sub" id="window-note"></p>
+    <p class="sub" id="context-line"></p>
 
     <section class="block">
       <h2>Connections over time</h2>
@@ -55,18 +56,35 @@
       <div id="weekday-axis" class="axis"></div>
     </section>
 
+    <section class="block">
+      <h2>How hostile is the internet?</h2>
+      <p>Any machine that puts SSH on the public internet is found and attacked by automated tools, usually within minutes. Nearly all of it is untargeted: credential stuffing against common accounts and passwords, port and service scanning, and scripted fingerprinting. The busiest sources are frequently rented servers, proxies, or compromised machines — not the people operating the tools — so a source address rarely says who is behind an attempt.</p>
+      <p id="hostile-line"></p>
+    </section>
+
     <section class="about">
       <h2>About this project</h2>
-      <p>This is a small research project: a single <a href="https://github.com/cowrie/cowrie">Cowrie</a> SSH honeypot exposed on the public internet and left to record whatever automation finds it. The sensor presents an ordinary Linux server so bots keep interacting with it. Every number here describes only what that one sensor observed, not the internet as a whole.</p>
-      <p>The pipeline:</p>
+      <p>This is a small research project: a single <a href="https://github.com/cowrie/cowrie">Cowrie</a> SSH honeypot exposed on the public internet and left to record whatever automation finds it. Everything below is derived from that one sensor, which is why it says more about automated background traffic than about "the internet" as a whole.</p>
+
+      <h3>The sensor</h3>
+      <p>Instead of running real services, the sensor logs every session and emulates a shell. It presents itself as an ordinary small Linux web server — filesystem, processes, and command output — so that automated tools behave as they would against a real host. It is isolated from any production system. It also accepts a broad range of credentials on purpose, so sessions continue past login and the commands that follow can be observed; a login success here is a design choice, not a compromised machine.</p>
+
+      <h3>The pipeline</h3>
       <ol>
-        <li>SSH sessions and submitted commands are written as JSON logs on the private host.</li>
+        <li>The sensor writes one JSON log line per event on the private host.</li>
         <li>An hourly job folds the most recent 90 days into a small local index; a daily job derives the 24-hour, 7-day, 30-day, and 90-day windows shown here.</li>
-        <li>Completed logs are archived to a private Cloudflare R2 bucket. A scheduled GitHub Action folds that archive into the all-time aggregate.</li>
-        <li>Only sanitized aggregates are committed to this repository and rendered as a static page — no server, no analytics, no third-party runtime dependency.</li>
+        <li>Completed logs are archived to a private Cloudflare R2 bucket, and a scheduled GitHub Action folds that archive into the all-time aggregate.</li>
+        <li>Only sanitized aggregates are committed here and rendered as a static page — no server, no analytics, no third-party runtime dependency.</li>
       </ol>
-      <p>Published fields are counts, country codes, top public source IPs, normalized command names, attempted usernames, and captured-file SHA-256 hashes. Passwords, login messages, complete command lines, URLs, session identifiers, and captured file contents or samples never leave the private host. The archive holds completed logs, so the all-time view lags the live windows by up to one rotation.</p>
-      <p>Treat these as observations, not attribution: source addresses may be VPNs, relays, scanners, or compromised machines, and country values are approximate. Operate honeypots only on infrastructure you control and only where you are permitted to.</p>
+
+      <h3>What the bots do</h3>
+      <p>After connecting, most sessions run a short fingerprinting burst — <code>uname</code>, <code>hostname</code>, <code>whoami</code>, <code>lscpu</code>, <code>netstat</code>, <code>df</code> and similar — then try to fetch a payload or persist. The command list above is normalized to executable names, and a file hash that keeps reappearing is usually a reusable installer or binary pulled from a URL. Attempted usernames are overwhelmingly generic (<code>root</code>, <code>admin</code>, <code>ubuntu</code>).</p>
+
+      <h3>What is published</h3>
+      <p>Counts, country codes, top public source IPs, normalized command names, attempted usernames, and captured-file SHA-256 hashes. Passwords, login messages, complete command lines, URLs, session identifiers, and captured file contents or samples never leave the private host. The archive holds completed logs, so the all-time view lags the live windows by up to one rotation.</p>
+
+      <h3>Limitations and ethics</h3>
+      <p>Treat these as observations, not attribution: source addresses may be VPNs, relays, scanners, or compromised machines, and country values are approximate. Counts include repeated automation from a single address and are affected by the sensor's uptime. Operate honeypots only on infrastructure you control and only where you are permitted to.</p>
     </section>
 
     <footer>
