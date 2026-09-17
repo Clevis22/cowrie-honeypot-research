@@ -1,0 +1,12 @@
+[Unit]
+Description=Publish Cowrie aggregate statistics daily
+
+[Timer]
+OnCalendar=*-*-* 00:20:00 UTC
+RandomizedDelaySec=20m
+Persistent=true
+Unit=cowrie-public-stats.service
+
+[Install]
+WantedBy=timers.target
+

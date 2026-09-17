@@ -1,0 +1,266 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-17T00:07:53.574386Z",
+  "window_days": 90,
+  "coverage": {
+    "first_observation": "2026-09-14T22:18:11.759238Z",
+    "last_observation": "2026-09-17T00:04:32.345582Z",
+    "range_complete": false
+  },
+  "totals": {
+    "connections": 5759,
+    "unique_public_ips": 315,
+    "login_attempts": 5347,
+    "commands": 5110,
+    "downloads": 55,
+    "uploads": 22
+  },
+  "top_ips": [
+    {
+      "label": "109.160.32.14",
+      "count": 1437
+    },
+    {
+      "label": "109.160.32.16",
+      "count": 1437
+    },
+    {
+      "label": "109.160.32.61",
+      "count": 1437
+    },
+    {
+      "label": "161.248.37.160",
+      "count": 385
+    },
+    {
+      "label": "80.94.92.55",
+      "count": 77
+    },
+    {
+      "label": "2.57.122.150",
+      "count": 73
+    },
+    {
+      "label": "176.53.159.196",
+      "count": 48
+    },
+    {
+      "label": "2.57.121.25",
+      "count": 46
+    },
+    {
+      "label": "92.118.39.71",
+      "count": 43
+    },
+    {
+      "label": "190.202.89.69",
+      "count": 41
+    }
+  ],
+  "top_countries": [
+    {
+      "label": "US",
+      "count": 4431
+    },
+    {
+      "label": "IN",
+      "count": 407
+    },
+    {
+      "label": "NL",
+      "count": 221
+    },
+    {
+      "label": "GB",
+      "count": 129
+    },
+    {
+      "label": "AD",
+      "count": 64
+    },
+    {
+      "label": "TR",
+      "count": 60
+    },
+    {
+      "label": "CN",
+      "count": 48
+    },
+    {
+      "label": "VE",
+      "count": 45
+    },
+    {
+      "label": "DE",
+      "count": 33
+    },
+    {
+      "label": "RU",
+      "count": 32
+    }
+  ],
+  "top_commands": [
+    {
+      "label": "uname",
+      "count": 4384
+    },
+    {
+      "label": "export",
+      "count": 221
+    },
+    {
+      "label": "cd",
+      "count": 88
+    },
+    {
+      "label": "hostname",
+      "count": 71
+    },
+    {
+      "label": "pwd",
+      "count": 46
+    },
+    {
+      "label": "whoami",
+      "count": 33
+    },
+    {
+      "label": "netstat",
+      "count": 32
+    },
+    {
+      "label": "history",
+      "count": 32
+    },
+    {
+      "label": "ls",
+      "count": 30
+    },
+    {
+      "label": "ps",
+      "count": 26
+    }
+  ],
+  "daily_connections": [
+    {
+      "date": "2026-08-19",
+      "count": 0
+    },
+    {
+      "date": "2026-08-20",
+      "count": 0
+    },
+    {
+      "date": "2026-08-21",
+      "count": 0
+    },
+    {
+      "date": "2026-08-22",
+      "count": 0
+    },
+    {
+      "date": "2026-08-23",
+      "count": 0
+    },
+    {
+      "date": "2026-08-24",
+      "count": 0
+    },
+    {
+      "date": "2026-08-25",
+      "count": 0
+    },
+    {
+      "date": "2026-08-26",
+      "count": 0
+    },
+    {
+      "date": "2026-08-27",
+      "count": 0
+    },
+    {
+      "date": "2026-08-28",
+      "count": 0
+    },
+    {
+      "date": "2026-08-29",
+      "count": 0
+    },
+    {
+      "date": "2026-08-30",
+      "count": 0
+    },
+    {
+      "date": "2026-08-31",
+      "count": 0
+    },
+    {
+      "date": "2026-09-01",
+      "count": 0
+    },
+    {
+      "date": "2026-09-02",
+      "count": 0
+    },
+    {
+      "date": "2026-09-03",
+      "count": 0
+    },
+    {
+      "date": "2026-09-04",
+      "count": 0
+    },
+    {
+      "date": "2026-09-05",
+      "count": 0
+    },
+    {
+      "date": "2026-09-06",
+      "count": 0
+    },
+    {
+      "date": "2026-09-07",
+      "count": 0
+    },
+    {
+      "date": "2026-09-08",
+      "count": 0
+    },
+    {
+      "date": "2026-09-09",
+      "count": 0
+    },
+    {
+      "date": "2026-09-10",
+      "count": 0
+    },
+    {
+      "date": "2026-09-11",
+      "count": 0
+    },
+    {
+      "date": "2026-09-12",
+      "count": 0
+    },
+    {
+      "date": "2026-09-13",
+      "count": 0
+    },
+    {
+      "date": "2026-09-14",
+      "count": 78
+    },
+    {
+      "date": "2026-09-15",
+      "count": 1736
+    },
+    {
+      "date": "2026-09-16",
+      "count": 3938
+    },
+    {
+      "date": "2026-09-17",
+      "count": 7
+    }
+  ]
+}

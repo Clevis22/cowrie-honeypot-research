@@ -1,0 +1,14 @@
+.DS_Store
+__pycache__/
+*.pyc
+*.sqlite*
+*.db
+*.log
+.env
+*.pem
+*.key
+id_*
+captures/
+downloads/
+raw/
+

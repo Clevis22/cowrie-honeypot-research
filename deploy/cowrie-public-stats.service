@@ -1,0 +1,26 @@
+[Unit]
+Description=Publish sanitized Cowrie aggregate statistics
+After=network-online.target cowrie-history-index.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=cowrie-stats
+Group=cowrie
+WorkingDirectory=/opt/cowrie-public-stats/repo
+Environment="GIT_SSH_COMMAND=/usr/bin/ssh -i /opt/cowrie-public-stats/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=/opt/cowrie-public-stats/known_hosts"
+ExecStart=/usr/bin/python3 /opt/cowrie-public-stats/repo/scripts/publish_stats.py --db /var/lib/cowrie-ui/history.sqlite --repo /opt/cowrie-public-stats/repo --days 90
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+ReadOnlyPaths=/var/lib/cowrie-ui/history.sqlite
+ReadWritePaths=/opt/cowrie-public-stats/repo
+MemoryMax=96M
+TasksMax=32
+

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Daily aggregate telemetry from a research Cowrie SSH honeypot.">
+  <title>Cowrie Honeypot — Public Telemetry</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">RESEARCH SENSOR / PUBLIC AGGREGATES</p>
+        <h1>Cowrie honeypot telemetry</h1>
+        <p class="intro">A small, daily snapshot of unsolicited SSH activity observed by one research sensor.</p>
+      </div>
+      <div class="freshness" aria-live="polite">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="freshness">Loading latest snapshot…</span>
+      </div>
+    </header>
+
+    <section class="summary" aria-label="Summary statistics">
+      <article><span>Connections</span><strong id="connections">—</strong></article>
+      <article><span>Unique public IPs</span><strong id="unique-ips">—</strong></article>
+      <article><span>Login attempts</span><strong id="logins">—</strong></article>
+      <article><span>Commands</span><strong id="commands">—</strong></article>
+      <article><span>File transfers</span><strong id="transfers">—</strong></article>
+    </section>
+
+    <p id="coverage" class="coverage">Loading coverage…</p>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>Top source IPs</h2>
+        <p class="note">Public, globally routable addresses ranked by connection count.</p>
+        <ol id="top-ips" class="ranking"></ol>
+      </article>
+
+      <article class="panel">
+        <h2>Top countries</h2>
+        <p class="note">Estimated from source IP; location does not establish attacker identity.</p>
+        <ol id="top-countries" class="ranking"></ol>
+      </article>
+
+      <article class="panel">
+        <h2>Top commands</h2>
+        <p class="note">Executable names only. Arguments and full command lines stay private.</p>
+        <ol id="top-commands" class="ranking"></ol>
+      </article>
+    </section>
+
+    <section class="panel activity">
+      <h2>Daily connections</h2>
+      <p class="note">The most recent 30 days within the published window.</p>
+      <div id="daily-chart" class="chart" role="img" aria-label="Daily connection counts"></div>
+    </section>
+
+    <section class="method">
+      <h2>What is published</h2>
+      <p>This page is generated once per day from a bounded local index. It contains counts, country codes, top public source IPs, and normalized command names. Raw logs, passwords, complete command lines, URLs, session identifiers, captured files, and malware samples never enter this repository.</p>
+      <p>Counts describe this sensor's observations, not the whole Internet. Automated scanners, relays, VPNs, and compromised hosts can all affect the results.</p>
+    </section>
+
+    <footer>
+      <a href="https://github.com/Clevis22/cowrie-honeypot-research">Methodology and source</a>
+      <span>Data timestamps are UTC.</span>
+    </footer>
+  </main>
+
+  <noscript>This page needs JavaScript to load the daily aggregate file.</noscript>
+  <script src="app.js" defer></script>
+</body>
+</html>
+
