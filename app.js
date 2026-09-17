@@ -97,8 +97,8 @@ function normalize(key) {
       usernames: alltime.top.usernames, hashes: alltime.top.hashes,
       points: monthly.map(row => ({ label: row.month, count: row.count })),
       hour: alltime.hour_of_day, weekday: alltime.weekday,
-      note: `All-time archive · ${alltime.coverage.days_observed} day(s) · ` +
-            `${alltime.coverage.first_observation.slice(0, 10)} to ${alltime.coverage.last_observation.slice(0, 10)} · ` +
+      note: `Archived through ${alltime.coverage.last_observation.slice(0, 10)} ` +
+            `(the current day's logs rotate before archiving) · ${alltime.coverage.days_observed} day(s) · ` +
             `${number.format(t.unique_hashes)} unique files · ${number.format(t.unique_usernames)} usernames`,
     };
   }
