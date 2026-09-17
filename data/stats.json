@@ -1,266 +1,1053 @@
 {
-  "schema_version": 1,
-  "generated_at": "2026-09-17T21:30:08.285306Z",
-  "window_days": 90,
+  "schema_version": 2,
+  "generated_at": "2026-09-17T21:30:22.511866Z",
   "coverage": {
     "first_observation": "2026-09-14T22:18:11.759238Z",
-    "last_observation": "2026-09-17T20:58:39.800484Z",
-    "range_complete": false
+    "last_observation": "2026-09-17T20:58:39.800484Z"
   },
-  "totals": {
-    "connections": 6968,
-    "unique_public_ips": 414,
-    "login_attempts": 6293,
-    "commands": 5786,
-    "downloads": 198,
-    "uploads": 22
-  },
-  "top_ips": [
-    {
-      "label": "109.160.32.14",
-      "count": 1437
+  "windows": {
+    "24h": {
+      "totals": {
+        "connections": 2141,
+        "unique_public_ips": 148,
+        "login_attempts": 1856,
+        "logins_accepted": 1461,
+        "logins_rejected": 395,
+        "commands": 1571,
+        "downloads": 148,
+        "uploads": 0,
+        "failed_downloads": 0
+      },
+      "top_ips": [
+        {
+          "label": "109.160.32.14",
+          "count": 848
+        },
+        {
+          "label": "161.248.37.160",
+          "count": 170
+        },
+        {
+          "label": "114.98.230.202",
+          "count": 110
+        },
+        {
+          "label": "34.63.42.56",
+          "count": 110
+        },
+        {
+          "label": "49.0.24.107",
+          "count": 100
+        },
+        {
+          "label": "15.235.192.186",
+          "count": 92
+        },
+        {
+          "label": "152.32.150.26",
+          "count": 78
+        },
+        {
+          "label": "117.72.35.56",
+          "count": 62
+        },
+        {
+          "label": "195.178.110.217",
+          "count": 57
+        },
+        {
+          "label": "211.91.62.222",
+          "count": 54
+        }
+      ],
+      "top_countries": [
+        {
+          "label": "US",
+          "count": 1069
+        },
+        {
+          "label": "CN",
+          "count": 299
+        },
+        {
+          "label": "IN",
+          "count": 173
+        },
+        {
+          "label": "ID",
+          "count": 111
+        },
+        {
+          "label": "SG",
+          "count": 92
+        },
+        {
+          "label": "NL",
+          "count": 79
+        },
+        {
+          "label": "AD",
+          "count": 64
+        },
+        {
+          "label": "GB",
+          "count": 60
+        },
+        {
+          "label": "VE",
+          "count": 24
+        },
+        {
+          "label": "DE",
+          "count": 22
+        }
+      ],
+      "top_commands": [
+        {
+          "label": "uname",
+          "count": 919
+        },
+        {
+          "label": "cd",
+          "count": 274
+        },
+        {
+          "label": "export",
+          "count": 96
+        },
+        {
+          "label": "cat",
+          "count": 31
+        },
+        {
+          "label": "whoami",
+          "count": 31
+        },
+        {
+          "label": "hostname",
+          "count": 25
+        },
+        {
+          "label": "ls",
+          "count": 21
+        },
+        {
+          "label": "pwd",
+          "count": 17
+        },
+        {
+          "label": "echo",
+          "count": 16
+        },
+        {
+          "label": "history",
+          "count": 14
+        }
+      ],
+      "top_usernames": [
+        {
+          "label": "root",
+          "count": 631
+        },
+        {
+          "label": "ubuntu",
+          "count": 201
+        },
+        {
+          "label": "admin",
+          "count": 141
+        },
+        {
+          "label": "345gs5662d34",
+          "count": 126
+        },
+        {
+          "label": "user",
+          "count": 46
+        },
+        {
+          "label": "deploy",
+          "count": 24
+        },
+        {
+          "label": "developer",
+          "count": 20
+        },
+        {
+          "label": "test",
+          "count": 20
+        },
+        {
+          "label": "ftpuser",
+          "count": 15
+        },
+        {
+          "label": "user1",
+          "count": 14
+        }
+      ],
+      "top_hashes": [
+        {
+          "label": "a8460f446be540410004b1a8db4083773fa46f7fe76fa84219c93daa1669f8f2",
+          "count": 137
+        },
+        {
+          "label": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "count": 5
+        },
+        {
+          "label": "00b6f15c2274420217ed3098a9f5f00545bf1793d7a324fd18a7809cbbf5b12b",
+          "count": 3
+        },
+        {
+          "label": "43728fbfb98bb39ff61a2db0fc2905bd6937997062b05b9ab8b186fdee18c09a",
+          "count": 3
+        }
+      ],
+      "series": {
+        "start": 1789596000,
+        "bucket_seconds": 3600,
+        "counts": [
+          701,
+          224,
+          119,
+          223,
+          57,
+          18,
+          22,
+          29,
+          23,
+          50,
+          81,
+          62,
+          19,
+          116,
+          15,
+          35,
+          73,
+          75,
+          42,
+          25,
+          21,
+          65,
+          46,
+          0
+        ]
+      }
     },
-    {
-      "label": "109.160.32.16",
-      "count": 1437
+    "7d": {
+      "totals": {
+        "connections": 6968,
+        "unique_public_ips": 414,
+        "login_attempts": 6293,
+        "logins_accepted": 5848,
+        "logins_rejected": 445,
+        "commands": 5786,
+        "downloads": 198,
+        "uploads": 22,
+        "failed_downloads": 0
+      },
+      "top_ips": [
+        {
+          "label": "109.160.32.14",
+          "count": 1437
+        },
+        {
+          "label": "109.160.32.16",
+          "count": 1437
+        },
+        {
+          "label": "109.160.32.61",
+          "count": 1437
+        },
+        {
+          "label": "161.248.37.160",
+          "count": 538
+        },
+        {
+          "label": "114.98.230.202",
+          "count": 110
+        },
+        {
+          "label": "34.63.42.56",
+          "count": 110
+        },
+        {
+          "label": "49.0.24.107",
+          "count": 100
+        },
+        {
+          "label": "15.235.192.186",
+          "count": 92
+        },
+        {
+          "label": "2.57.122.150",
+          "count": 90
+        },
+        {
+          "label": "80.94.92.55",
+          "count": 81
+        }
+      ],
+      "top_countries": [
+        {
+          "label": "US",
+          "count": 4651
+        },
+        {
+          "label": "IN",
+          "count": 563
+        },
+        {
+          "label": "CN",
+          "count": 337
+        },
+        {
+          "label": "NL",
+          "count": 287
+        },
+        {
+          "label": "GB",
+          "count": 184
+        },
+        {
+          "label": "AD",
+          "count": 126
+        },
+        {
+          "label": "ID",
+          "count": 125
+        },
+        {
+          "label": "SG",
+          "count": 103
+        },
+        {
+          "label": "TR",
+          "count": 78
+        },
+        {
+          "label": "VE",
+          "count": 66
+        }
+      ],
+      "top_commands": [
+        {
+          "label": "uname",
+          "count": 4449
+        },
+        {
+          "label": "cd",
+          "count": 356
+        },
+        {
+          "label": "export",
+          "count": 316
+        },
+        {
+          "label": "hostname",
+          "count": 93
+        },
+        {
+          "label": "pwd",
+          "count": 61
+        },
+        {
+          "label": "whoami",
+          "count": 59
+        },
+        {
+          "label": "ls",
+          "count": 50
+        },
+        {
+          "label": "history",
+          "count": 43
+        },
+        {
+          "label": "netstat",
+          "count": 42
+        },
+        {
+          "label": "cat",
+          "count": 40
+        }
+      ],
+      "top_usernames": [
+        {
+          "label": "root",
+          "count": 2504
+        },
+        {
+          "label": "admin",
+          "count": 372
+        },
+        {
+          "label": "ubuntu",
+          "count": 362
+        },
+        {
+          "label": "user",
+          "count": 197
+        },
+        {
+          "label": "345gs5662d34",
+          "count": 166
+        },
+        {
+          "label": "deploy",
+          "count": 104
+        },
+        {
+          "label": "test",
+          "count": 90
+        },
+        {
+          "label": "user1",
+          "count": 46
+        },
+        {
+          "label": "claude",
+          "count": 45
+        },
+        {
+          "label": "debian",
+          "count": 39
+        }
+      ],
+      "top_hashes": [
+        {
+          "label": "a8460f446be540410004b1a8db4083773fa46f7fe76fa84219c93daa1669f8f2",
+          "count": 178
+        },
+        {
+          "label": "00b6f15c2274420217ed3098a9f5f00545bf1793d7a324fd18a7809cbbf5b12b",
+          "count": 6
+        },
+        {
+          "label": "43728fbfb98bb39ff61a2db0fc2905bd6937997062b05b9ab8b186fdee18c09a",
+          "count": 6
+        },
+        {
+          "label": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "count": 5
+        },
+        {
+          "label": "1e70b63472772e3f5092ffe9c3573470e73590e6ab6d93fdcede1d368a5fd72d",
+          "count": 3
+        },
+        {
+          "label": "3f3a11bafabb1a35db913cfe51995f2e357d049e268860175876ae5a93d23892",
+          "count": 3
+        },
+        {
+          "label": "3f3bf218089d1488617d37f8a5116bb2791eb39ce06a1b5bc9a4cdfe5e94dd39",
+          "count": 3
+        },
+        {
+          "label": "8a68d1c08ea31250063f70b1ccb5051db1f7ab6e17d46e9dd3cc292b9849878b",
+          "count": 3
+        },
+        {
+          "label": "8e1a67a5c03b3cd818f046c7a1605afccc0ee5ce437a0d099881f1872b54bc70",
+          "count": 3
+        },
+        {
+          "label": "d1cac82f44b54b0fd244a9e4122811e9ae108a197c7a65a20fd2e7552683e68e",
+          "count": 3
+        }
+      ],
+      "series": {
+        "start": 1789084800,
+        "bucket_seconds": 86400,
+        "counts": [
+          0,
+          0,
+          0,
+          78,
+          1736,
+          3938,
+          1216
+        ]
+      }
     },
-    {
-      "label": "109.160.32.61",
-      "count": 1437
+    "30d": {
+      "totals": {
+        "connections": 6968,
+        "unique_public_ips": 414,
+        "login_attempts": 6293,
+        "logins_accepted": 5848,
+        "logins_rejected": 445,
+        "commands": 5786,
+        "downloads": 198,
+        "uploads": 22,
+        "failed_downloads": 0
+      },
+      "top_ips": [
+        {
+          "label": "109.160.32.14",
+          "count": 1437
+        },
+        {
+          "label": "109.160.32.16",
+          "count": 1437
+        },
+        {
+          "label": "109.160.32.61",
+          "count": 1437
+        },
+        {
+          "label": "161.248.37.160",
+          "count": 538
+        },
+        {
+          "label": "114.98.230.202",
+          "count": 110
+        },
+        {
+          "label": "34.63.42.56",
+          "count": 110
+        },
+        {
+          "label": "49.0.24.107",
+          "count": 100
+        },
+        {
+          "label": "15.235.192.186",
+          "count": 92
+        },
+        {
+          "label": "2.57.122.150",
+          "count": 90
+        },
+        {
+          "label": "80.94.92.55",
+          "count": 81
+        }
+      ],
+      "top_countries": [
+        {
+          "label": "US",
+          "count": 4651
+        },
+        {
+          "label": "IN",
+          "count": 563
+        },
+        {
+          "label": "CN",
+          "count": 337
+        },
+        {
+          "label": "NL",
+          "count": 287
+        },
+        {
+          "label": "GB",
+          "count": 184
+        },
+        {
+          "label": "AD",
+          "count": 126
+        },
+        {
+          "label": "ID",
+          "count": 125
+        },
+        {
+          "label": "SG",
+          "count": 103
+        },
+        {
+          "label": "TR",
+          "count": 78
+        },
+        {
+          "label": "VE",
+          "count": 66
+        }
+      ],
+      "top_commands": [
+        {
+          "label": "uname",
+          "count": 4449
+        },
+        {
+          "label": "cd",
+          "count": 356
+        },
+        {
+          "label": "export",
+          "count": 316
+        },
+        {
+          "label": "hostname",
+          "count": 93
+        },
+        {
+          "label": "pwd",
+          "count": 61
+        },
+        {
+          "label": "whoami",
+          "count": 59
+        },
+        {
+          "label": "ls",
+          "count": 50
+        },
+        {
+          "label": "history",
+          "count": 43
+        },
+        {
+          "label": "netstat",
+          "count": 42
+        },
+        {
+          "label": "cat",
+          "count": 40
+        }
+      ],
+      "top_usernames": [
+        {
+          "label": "root",
+          "count": 2504
+        },
+        {
+          "label": "admin",
+          "count": 372
+        },
+        {
+          "label": "ubuntu",
+          "count": 362
+        },
+        {
+          "label": "user",
+          "count": 197
+        },
+        {
+          "label": "345gs5662d34",
+          "count": 166
+        },
+        {
+          "label": "deploy",
+          "count": 104
+        },
+        {
+          "label": "test",
+          "count": 90
+        },
+        {
+          "label": "user1",
+          "count": 46
+        },
+        {
+          "label": "claude",
+          "count": 45
+        },
+        {
+          "label": "debian",
+          "count": 39
+        }
+      ],
+      "top_hashes": [
+        {
+          "label": "a8460f446be540410004b1a8db4083773fa46f7fe76fa84219c93daa1669f8f2",
+          "count": 178
+        },
+        {
+          "label": "00b6f15c2274420217ed3098a9f5f00545bf1793d7a324fd18a7809cbbf5b12b",
+          "count": 6
+        },
+        {
+          "label": "43728fbfb98bb39ff61a2db0fc2905bd6937997062b05b9ab8b186fdee18c09a",
+          "count": 6
+        },
+        {
+          "label": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "count": 5
+        },
+        {
+          "label": "1e70b63472772e3f5092ffe9c3573470e73590e6ab6d93fdcede1d368a5fd72d",
+          "count": 3
+        },
+        {
+          "label": "3f3a11bafabb1a35db913cfe51995f2e357d049e268860175876ae5a93d23892",
+          "count": 3
+        },
+        {
+          "label": "3f3bf218089d1488617d37f8a5116bb2791eb39ce06a1b5bc9a4cdfe5e94dd39",
+          "count": 3
+        },
+        {
+          "label": "8a68d1c08ea31250063f70b1ccb5051db1f7ab6e17d46e9dd3cc292b9849878b",
+          "count": 3
+        },
+        {
+          "label": "8e1a67a5c03b3cd818f046c7a1605afccc0ee5ce437a0d099881f1872b54bc70",
+          "count": 3
+        },
+        {
+          "label": "d1cac82f44b54b0fd244a9e4122811e9ae108a197c7a65a20fd2e7552683e68e",
+          "count": 3
+        }
+      ],
+      "series": {
+        "start": 1787097600,
+        "bucket_seconds": 86400,
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          78,
+          1736,
+          3938,
+          1216
+        ]
+      }
     },
-    {
-      "label": "161.248.37.160",
-      "count": 538
-    },
-    {
-      "label": "114.98.230.202",
-      "count": 110
-    },
-    {
-      "label": "34.63.42.56",
-      "count": 110
-    },
-    {
-      "label": "49.0.24.107",
-      "count": 100
-    },
-    {
-      "label": "15.235.192.186",
-      "count": 92
-    },
-    {
-      "label": "2.57.122.150",
-      "count": 90
-    },
-    {
-      "label": "80.94.92.55",
-      "count": 81
+    "90d": {
+      "totals": {
+        "connections": 6968,
+        "unique_public_ips": 414,
+        "login_attempts": 6293,
+        "logins_accepted": 5848,
+        "logins_rejected": 445,
+        "commands": 5786,
+        "downloads": 198,
+        "uploads": 22,
+        "failed_downloads": 0
+      },
+      "top_ips": [
+        {
+          "label": "109.160.32.14",
+          "count": 1437
+        },
+        {
+          "label": "109.160.32.16",
+          "count": 1437
+        },
+        {
+          "label": "109.160.32.61",
+          "count": 1437
+        },
+        {
+          "label": "161.248.37.160",
+          "count": 538
+        },
+        {
+          "label": "114.98.230.202",
+          "count": 110
+        },
+        {
+          "label": "34.63.42.56",
+          "count": 110
+        },
+        {
+          "label": "49.0.24.107",
+          "count": 100
+        },
+        {
+          "label": "15.235.192.186",
+          "count": 92
+        },
+        {
+          "label": "2.57.122.150",
+          "count": 90
+        },
+        {
+          "label": "80.94.92.55",
+          "count": 81
+        }
+      ],
+      "top_countries": [
+        {
+          "label": "US",
+          "count": 4651
+        },
+        {
+          "label": "IN",
+          "count": 563
+        },
+        {
+          "label": "CN",
+          "count": 337
+        },
+        {
+          "label": "NL",
+          "count": 287
+        },
+        {
+          "label": "GB",
+          "count": 184
+        },
+        {
+          "label": "AD",
+          "count": 126
+        },
+        {
+          "label": "ID",
+          "count": 125
+        },
+        {
+          "label": "SG",
+          "count": 103
+        },
+        {
+          "label": "TR",
+          "count": 78
+        },
+        {
+          "label": "VE",
+          "count": 66
+        }
+      ],
+      "top_commands": [
+        {
+          "label": "uname",
+          "count": 4449
+        },
+        {
+          "label": "cd",
+          "count": 356
+        },
+        {
+          "label": "export",
+          "count": 316
+        },
+        {
+          "label": "hostname",
+          "count": 93
+        },
+        {
+          "label": "pwd",
+          "count": 61
+        },
+        {
+          "label": "whoami",
+          "count": 59
+        },
+        {
+          "label": "ls",
+          "count": 50
+        },
+        {
+          "label": "history",
+          "count": 43
+        },
+        {
+          "label": "netstat",
+          "count": 42
+        },
+        {
+          "label": "cat",
+          "count": 40
+        }
+      ],
+      "top_usernames": [
+        {
+          "label": "root",
+          "count": 2504
+        },
+        {
+          "label": "admin",
+          "count": 372
+        },
+        {
+          "label": "ubuntu",
+          "count": 362
+        },
+        {
+          "label": "user",
+          "count": 197
+        },
+        {
+          "label": "345gs5662d34",
+          "count": 166
+        },
+        {
+          "label": "deploy",
+          "count": 104
+        },
+        {
+          "label": "test",
+          "count": 90
+        },
+        {
+          "label": "user1",
+          "count": 46
+        },
+        {
+          "label": "claude",
+          "count": 45
+        },
+        {
+          "label": "debian",
+          "count": 39
+        }
+      ],
+      "top_hashes": [
+        {
+          "label": "a8460f446be540410004b1a8db4083773fa46f7fe76fa84219c93daa1669f8f2",
+          "count": 178
+        },
+        {
+          "label": "00b6f15c2274420217ed3098a9f5f00545bf1793d7a324fd18a7809cbbf5b12b",
+          "count": 6
+        },
+        {
+          "label": "43728fbfb98bb39ff61a2db0fc2905bd6937997062b05b9ab8b186fdee18c09a",
+          "count": 6
+        },
+        {
+          "label": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "count": 5
+        },
+        {
+          "label": "1e70b63472772e3f5092ffe9c3573470e73590e6ab6d93fdcede1d368a5fd72d",
+          "count": 3
+        },
+        {
+          "label": "3f3a11bafabb1a35db913cfe51995f2e357d049e268860175876ae5a93d23892",
+          "count": 3
+        },
+        {
+          "label": "3f3bf218089d1488617d37f8a5116bb2791eb39ce06a1b5bc9a4cdfe5e94dd39",
+          "count": 3
+        },
+        {
+          "label": "8a68d1c08ea31250063f70b1ccb5051db1f7ab6e17d46e9dd3cc292b9849878b",
+          "count": 3
+        },
+        {
+          "label": "8e1a67a5c03b3cd818f046c7a1605afccc0ee5ce437a0d099881f1872b54bc70",
+          "count": 3
+        },
+        {
+          "label": "d1cac82f44b54b0fd244a9e4122811e9ae108a197c7a65a20fd2e7552683e68e",
+          "count": 3
+        }
+      ],
+      "series": {
+        "start": 1781913600,
+        "bucket_seconds": 86400,
+        "counts": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          78,
+          1736,
+          3938,
+          1216
+        ]
+      }
     }
-  ],
-  "top_countries": [
-    {
-      "label": "US",
-      "count": 4651
-    },
-    {
-      "label": "IN",
-      "count": 563
-    },
-    {
-      "label": "CN",
-      "count": 337
-    },
-    {
-      "label": "NL",
-      "count": 287
-    },
-    {
-      "label": "GB",
-      "count": 184
-    },
-    {
-      "label": "AD",
-      "count": 126
-    },
-    {
-      "label": "ID",
-      "count": 125
-    },
-    {
-      "label": "SG",
-      "count": 103
-    },
-    {
-      "label": "TR",
-      "count": 78
-    },
-    {
-      "label": "VE",
-      "count": 66
-    }
-  ],
-  "top_commands": [
-    {
-      "label": "uname",
-      "count": 4449
-    },
-    {
-      "label": "cd",
-      "count": 356
-    },
-    {
-      "label": "export",
-      "count": 316
-    },
-    {
-      "label": "hostname",
-      "count": 93
-    },
-    {
-      "label": "pwd",
-      "count": 61
-    },
-    {
-      "label": "whoami",
-      "count": 59
-    },
-    {
-      "label": "ls",
-      "count": 50
-    },
-    {
-      "label": "history",
-      "count": 43
-    },
-    {
-      "label": "netstat",
-      "count": 42
-    },
-    {
-      "label": "cat",
-      "count": 40
-    }
-  ],
-  "daily_connections": [
-    {
-      "date": "2026-08-19",
-      "count": 0
-    },
-    {
-      "date": "2026-08-20",
-      "count": 0
-    },
-    {
-      "date": "2026-08-21",
-      "count": 0
-    },
-    {
-      "date": "2026-08-22",
-      "count": 0
-    },
-    {
-      "date": "2026-08-23",
-      "count": 0
-    },
-    {
-      "date": "2026-08-24",
-      "count": 0
-    },
-    {
-      "date": "2026-08-25",
-      "count": 0
-    },
-    {
-      "date": "2026-08-26",
-      "count": 0
-    },
-    {
-      "date": "2026-08-27",
-      "count": 0
-    },
-    {
-      "date": "2026-08-28",
-      "count": 0
-    },
-    {
-      "date": "2026-08-29",
-      "count": 0
-    },
-    {
-      "date": "2026-08-30",
-      "count": 0
-    },
-    {
-      "date": "2026-08-31",
-      "count": 0
-    },
-    {
-      "date": "2026-09-01",
-      "count": 0
-    },
-    {
-      "date": "2026-09-02",
-      "count": 0
-    },
-    {
-      "date": "2026-09-03",
-      "count": 0
-    },
-    {
-      "date": "2026-09-04",
-      "count": 0
-    },
-    {
-      "date": "2026-09-05",
-      "count": 0
-    },
-    {
-      "date": "2026-09-06",
-      "count": 0
-    },
-    {
-      "date": "2026-09-07",
-      "count": 0
-    },
-    {
-      "date": "2026-09-08",
-      "count": 0
-    },
-    {
-      "date": "2026-09-09",
-      "count": 0
-    },
-    {
-      "date": "2026-09-10",
-      "count": 0
-    },
-    {
-      "date": "2026-09-11",
-      "count": 0
-    },
-    {
-      "date": "2026-09-12",
-      "count": 0
-    },
-    {
-      "date": "2026-09-13",
-      "count": 0
-    },
-    {
-      "date": "2026-09-14",
-      "count": 78
-    },
-    {
-      "date": "2026-09-15",
-      "count": 1736
-    },
-    {
-      "date": "2026-09-16",
-      "count": 3938
-    },
-    {
-      "date": "2026-09-17",
-      "count": 1216
-    }
-  ]
+  }
 }
