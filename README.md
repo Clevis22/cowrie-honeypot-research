@@ -14,6 +14,7 @@ Internet → Cowrie SSH sensor → local JSON logs
                               ├─ hourly 90-day SQLite index
                               ├─ private raw-log archive in Cloudflare R2
                               ├─ captured-sample contribution to VirusTotal
+                              ├─ AbuseIPDB reports for observed brute-force sources
                               └─ daily sanitized JSON → GitHub Pages
 ```
 

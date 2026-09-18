@@ -99,3 +99,4 @@ a { color: inherit; text-underline-offset: 2px; }
 
 .about h3 { margin: 22px 0 6px; font-size: 0.95rem; font-weight: 600; }
 .about code, .block code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.85em; }
+.contributor { display: inline-block; margin-top: 8px; }

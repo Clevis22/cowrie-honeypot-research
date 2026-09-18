@@ -83,6 +83,12 @@
       <h3>What is published</h3>
       <p>Counts, country codes, top public source IPs, normalized command names, attempted usernames, and captured-file SHA-256 hashes. Passwords, login messages, complete command lines, URLs, session identifiers, and captured file contents or samples never leave the private host. The archive holds completed logs, so the all-time view lags the live windows by up to one rotation.</p>
 
+      <h3>AbuseIPDB contributions</h3>
+      <p>Public source IPs observed opening SSH brute-force sessions are also contributed to <a href="https://www.abuseipdb.com/">AbuseIPDB</a> — at most one report per IP per UTC day, using categories <code>18</code> (Brute-Force) and <code>22</code> (SSH). No credentials, usernames, commands, or other session fields are sent. This sensor's contributor profile is linked below.</p>
+      <a class="contributor" href="https://www.abuseipdb.com/user/350016" title="AbuseIPDB is an IP address blacklist for webmasters and sysadmins to report IP addresses engaging in abusive behavior on their networks">
+        <img src="abuseipdb-contributor.svg" alt="AbuseIPDB Contributor Badge" style="width: 311px;max-width: 100%;height: auto;background: #35c246 linear-gradient(rgba(255,255,255,0), rgba(255,255,255,.3) 50%, rgba(0,0,0,.2) 51%, rgba(0,0,0,0)); padding: 5px;">
+      </a>
+
       <h3>Limitations and ethics</h3>
       <p>Treat these as observations, not attribution: source addresses may be VPNs, relays, scanners, or compromised machines, and country values are approximate. Counts include repeated automation from a single address and are affected by the sensor's uptime. Operate honeypots only on infrastructure you control and only where you are permitted to.</p>
     </section>
